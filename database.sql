@@ -317,3 +317,55 @@ VALUES (
         10,
         10
     );
+-- SUNUM İÇİN: Gecikmeli ödünç kaydı (30 gün geçmiş, teslim edilmemiş)
+INSERT INTO ODUNC (
+        UyeID,
+        KitapID,
+        KullaniciID,
+        OduncTarihi,
+        SonTeslimTarihi
+    )
+VALUES (
+        1,
+        1,
+        1,
+        CURRENT_DATE - INTERVAL '45 days',
+        CURRENT_DATE - INTERVAL '30 days'
+    );
+UPDATE KITAP
+SET MevcutAdet = MevcutAdet - 1
+WHERE KitapID = 1;
+-- SUNUM İÇİN: Önceden ceza almış kayıt (Ayşe - 20 gün gecikme, 100 TL ceza)
+INSERT INTO ODUNC (
+        UyeID,
+        KitapID,
+        KullaniciID,
+        OduncTarihi,
+        SonTeslimTarihi,
+        TeslimTarihi
+    )
+VALUES (
+        2,
+        2,
+        1,
+        CURRENT_DATE - INTERVAL '50 days',
+        CURRENT_DATE - INTERVAL '35 days',
+        CURRENT_DATE - INTERVAL '15 days'
+    );
+INSERT INTO CEZA (
+        OduncID,
+        UyeID,
+        Tutar,
+        GecikmeGunu,
+        OlusturmaTarihi
+    )
+VALUES (
+        2,
+        2,
+        100.00,
+        20,
+        CURRENT_DATE - INTERVAL '15 days'
+    );
+UPDATE UYE
+SET ToplamBorc = 100.00
+WHERE UyeID = 2;
